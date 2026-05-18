@@ -1,20 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 export default function RegisterPage() {
   const router = useRouter()
+  const [centers, setCenters] = useState([])
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    centerId: ""
   })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    fetch("/api/centers")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setCenters(data)
+      })
+  }, [])
+  
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -33,7 +43,8 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          centerId: formData.centerId || null
         })
       })
 
@@ -91,6 +102,24 @@ export default function RegisterPage() {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              المسجد / المركز
+            </label>
+            <select
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.centerId}
+              onChange={(e) => setFormData({ ...formData, centerId: e.target.value })}
+            >
+              <option value="">اختر المسجد أو المركز</option>
+              {centers.map(center => (
+                <option key={center.id} value={center.id}>
+                  {center.name} — {center.location}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

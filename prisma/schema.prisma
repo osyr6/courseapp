@@ -17,6 +17,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   enrollments Enrollment[]
+  center      Center?      @relation(fields: [centerId], references: [id])
+  centerId    String?
 }
 
 model Course {
@@ -54,4 +56,15 @@ model Payment {
   method       String
   reference    String?
   createdAt    DateTime @default(now())
+}
+
+model Center {
+  id        String   @id @default(cuid())
+  name      String
+  location  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
 }
