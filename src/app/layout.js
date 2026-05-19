@@ -1,6 +1,7 @@
 import { Cairo } from "next/font/google"
 import "./globals.css"
 import AuthSessionProvider from "@/components/shared/SessionProvider"
+import Chatbot from "@/components/shared/Chatbot"
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
       <body className={cairo.className}>
         <AuthSessionProvider>
           {children}
+          <Chatbot />
         </AuthSessionProvider>
       </body>
     </html>
