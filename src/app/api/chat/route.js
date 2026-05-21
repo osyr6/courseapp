@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server"
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import Groq from "groq-sdk"
 import db from "@/lib/db"
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY
+})
 
 export async function POST(request) {
   try {
@@ -24,7 +26,7 @@ export async function POST(request) {
       `- ${c.name} في ${c.location}`
     ).join("\n")
 
-    const SYSTEM_PROMPT = `أنت مساعد ذكي لمنصة الدورات التعليمية في سلطنة عُمان.
+    const systemPrompt = `أنت مساعد ذكي لمنصة الدورات التعليمية في سلطنة عُمان.
     
 الدورات المتاحة حالياً:
 ${coursesText}
@@ -37,28 +39,44 @@ ${centersText}
 - تحويل بنكي
 - دفع إلكتروني
 
-تحدث دائماً باللغة العربية وكن مهذباً ومفيداً.`
+مهمتك مساعدة الطلاب في:
+- الإجابة على أسئلتهم عن الدورات المتاحة
+- مساعدتهم في عملية التسجيل
+- الإجابة على الأسئلة العامة عن المنصة
+- توجيههم لطرق الدفع المتاحة
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash-lite",
-      systemInstruction: SYSTEM_PROMPT
+تحدث دائماً باللغة العربية الفصحى المهذية فقط ولا تستخدم أي لغة أخرى أبداً حتى لو سألك المستخدم بلغة أخرى.
+يجب أن تكون جميع ردودك باللغة العربية فقط بدون أي كلمات أجنبية.
+اذا سالك احد سؤال خارج موضوع الموقع او سؤال خادشا فاعتذر عن الاجابة
+ 
+لاتكتب كلمات بالصينية عن طريق الخطا
+لاتعرض على المستخدم التحدث كثيرا حاول ان تكون اجاباتك رسمية 
+وابتعد عن الاجابات الطويلة جدا عند الحصول على اجابة قصيرةاو دردشة خارج نطاق الاسئلة 
+إذا سألك أحد عن شيء خارج نطاق المنصة، وجّهه برفق للتواصل مع الإدارة.`
+
+    const chatMessages = [
+      { role: "system", content: systemPrompt },
+      ...messages.map(msg => ({
+        role: msg.role === "assistant" ? "assistant" : "user",
+        content: msg.content
+      }))
+    ]
+
+    const completion = await groq.chat.completions.create({
+      messages: chatMessages,
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.7,
+      max_tokens: 1024
     })
 
-    // Build full conversation as a single prompt
-    const conversationText = messages.map(msg => 
-      msg.role === "user" ? `المستخدم: ${msg.content}` : `المساعد: ${msg.content}`
-    ).join("\n")
-
-    const result = await model.generateContent(conversationText)
-    const response = await result.response
-    const text = response.text()
+    const text = completion.choices[0]?.message?.content || "عذراً، لم أتمكن من الإجابة."
 
     return NextResponse.json({ message: text })
 
   } catch (error) {
-    console.error(error)
+    console.error("CHAT ERROR:", error.message)
     return NextResponse.json(
-      { error: "حدث خطأ في الخادم" },
+      { error: error.message || "حدث خطأ في الخادم" },
       { status: 500 }
     )
   }
