@@ -2,6 +2,7 @@ import { Cairo } from "next/font/google"
 import "./globals.css"
 import AuthSessionProvider from "@/components/shared/SessionProvider"
 import Chatbot from "@/components/shared/Chatbot"
+import Navbar from "@/components/layout/Navbar"
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -9,8 +10,8 @@ const cairo = Cairo({
 })
 
 export const metadata = {
-  title: "منصة الدورات التعليمية",
-  description: "منصة تعليمية لتسجيل الدورات",
+  title: "الجمعية العمانية للعناية بالقرآن الكريم - منصة الدورات",
+  description: "منصة الجمعية العمانية للعناية بالقرآن الكريم لتسجيل الدورات القرآنية",
 }
 
 export default function RootLayout({ children }) {
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
     <html lang="ar" dir="rtl">
       <body className={cairo.className}>
         <AuthSessionProvider>
+          <Navbar />
           {children}
           <Chatbot />
         </AuthSessionProvider>

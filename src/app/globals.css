@@ -12,20 +12,38 @@ html {
 
 body {
   min-height: 100vh;
-  background-color: #f8fafc;
-  color: #1e293b;
+  background-color: #f8f5f0;
+  color: #1a0a00;
 }
 
-/* Scrollbar */
+/* Override blue with red theme */
+.bg-blue-600 { background-color: #8B1A1A !important; }
+.bg-blue-700 { background-color: #6B1010 !important; }
+.bg-blue-50 { background-color: #fff5f5 !important; }
+.bg-blue-100 { background-color: #ffe4e4 !important; }
+.text-blue-600 { color: #8B1A1A !important; }
+.text-blue-700 { color: #6B1010 !important; }
+.text-blue-400 { color: #C4791A !important; }
+.text-blue-200 { color: #f5c6a0 !important; }
+.border-blue-600 { border-color: #8B1A1A !important; }
+.border-blue-500 { border-color: #8B1A1A !important; }
+.border-blue-300 { border-color: #C4791A !important; }
+.ring-blue-500 { --tw-ring-color: #8B1A1A !important; }
+.focus\:ring-blue-500:focus { --tw-ring-color: #8B1A1A !important; }
+.hover\:bg-blue-700:hover { background-color: #6B1010 !important; }
+.hover\:text-blue-600:hover { color: #8B1A1A !important; }
+.from-blue-50 { --tw-gradient-from: #fff5f5 !important; }
+.to-indigo-100 { --tw-gradient-to: #ffe4e4 !important; }
+
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #f1ebe0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8;
+  background: #8B1A1A;
   border-radius: 3px;
 }
