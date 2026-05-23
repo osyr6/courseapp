@@ -5,7 +5,10 @@ export async function GET() {
   try {
     const courses = await db.course.findMany({
       where: { isActive: true },
-      orderBy: { createdAt: "desc" }
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: { select: { enrollments: true } }
+      }
     })
 
     return NextResponse.json(courses)
